@@ -5,16 +5,16 @@ let pool = null;
 // Opciones de pizza (hardcoded ya que son fijas)
 const pizzaOptions = [
   {
-    id: 'pizza_1',
+    id: 'beatobraseada',
     name: 'Beato Braseada',
     description: 'Bondiola de cerdo desmechada, lactonesa de ajo y miel picante. Decorada con cebolla de verdeo.',
     image: '/images/beatobraseada.png'
   },
   {
-    id: 'pizza_2', 
+    id: 'pizzachurri', 
     name: 'Pizza Churri',
     description: 'Al estilo cordobés. Chorizo de cerdo, pimiento rojo asado, cebollas encurtidas, queso provolone y el chimichurri de la casa.',
-    image: '/images/churri.png'
+    image: '/images/pizzachurri.png'
   }
 ];
 
