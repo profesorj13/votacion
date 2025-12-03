@@ -8,13 +8,13 @@ const pizzaOptions = [
     id: 'beatobraseada',
     name: 'Beato Braseada',
     description: 'Bondiola de cerdo desmechada, lactonesa de ajo y miel picante. Decorada con cebolla de verdeo.',
-    image: '/images/beatobraseada.png'
+    image: '/images/beatobraseada.webp'
   },
   {
     id: 'pizzachurri', 
     name: 'Pizza Churri',
     description: 'Al estilo cordobés. Chorizo de cerdo, pimiento rojo asado, cebollas encurtidas, queso provolone y el chimichurri de la casa.',
-    image: '/images/pizzachurri.png'
+    image: '/images/pizzachurri.webp'
   }
 ];
 
