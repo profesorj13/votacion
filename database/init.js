@@ -12,13 +12,13 @@ const pizzaOptions = [
     id: 'pizza_1',
     name: 'Margherita Clásica',
     description: 'La reina de las pizzas: salsa de tomate San Marzano, mozzarella fresca de búfala, albahaca fresca y un toque de aceite de oliva extra virgen.',
-    image: '/images/margherita.jpg'
+    image: '/images/margherita.png'
   },
   {
     id: 'pizza_2', 
     name: 'Pepperoni Suprema',
     description: 'Para los amantes del sabor intenso: generosas capas de pepperoni crujiente sobre mozzarella derretida, con un toque de orégano italiano.',
-    image: '/images/pepperoni.jpg'
+    image: '/images/pepperoni.png'
   }
 ];
 

@@ -56,8 +56,8 @@ function renderPizzaOptions() {
   pizzaGrid.innerHTML = pizzaOptions.map(pizza => `
     <div class="pizza-card" data-id="${pizza.id}">
       <div class="pizza-image-container">
-        <div class="pizza-image" style="background-image: url('${pizza.image}')">
-          <div class="pizza-emoji">🍕</div>
+        <div class="pizza-image">
+          <img src="${pizza.image}" alt="${pizza.name}" class="pizza-img">
         </div>
         <div class="selection-indicator">
           <span class="check-mark">✓</span>

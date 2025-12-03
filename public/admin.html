@@ -3,17 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel de Supervisor 🍕</title>
+  <title>Panel de Supervisor - La Pizza del Pueblo</title>
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/images/PDP_vector.svg">
 </head>
 <body class="admin-page">
   <!-- Login Modal -->
   <div id="login-modal" class="modal">
     <div class="modal-content login-box">
-      <h2>🔐 Acceso Supervisor</h2>
+      <h2>🔐 ACCESO SUPERVISOR</h2>
       <form id="login-form">
         <div class="form-group">
           <label for="username">Usuario</label>
@@ -32,14 +33,17 @@
   <!-- Panel Principal -->
   <div id="admin-panel" class="hidden">
     <header class="admin-header">
-      <h1>🍕 Panel de Supervisor</h1>
+      <h1>
+        <img src="/images/PDP_vector.svg" alt="La Pizza del Pueblo" class="logo-small">
+        PANEL DE SUPERVISOR
+      </h1>
       <button id="logout-btn" class="btn btn-secondary">Cerrar Sesión</button>
     </header>
 
     <main class="admin-main">
       <!-- Sección Generar Link -->
       <section class="card">
-        <h2>Generar Link de Votación</h2>
+        <h2>GENERAR LINK DE VOTACIÓN</h2>
         <p class="card-description">Cada link permite emitir 2 votos y solo puede usarse una vez.</p>
         <button id="generate-btn" class="btn btn-primary">
           <span class="btn-icon">✨</span>
@@ -56,7 +60,7 @@
 
       <!-- Sección Resultados -->
       <section class="card">
-        <h2>📊 Resultados en Vivo</h2>
+        <h2>📊 RESULTADOS EN VIVO</h2>
         <div id="results-container" class="results-container">
           <div class="loading">Cargando resultados...</div>
         </div>
@@ -65,7 +69,7 @@
 
       <!-- Sección Links Generados -->
       <section class="card">
-        <h2>📋 Links Generados</h2>
+        <h2>📋 LINKS GENERADOS</h2>
         <div id="links-container" class="links-container">
           <div class="loading">Cargando links...</div>
         </div>
@@ -76,4 +80,3 @@
   <script src="/js/admin.js"></script>
 </body>
 </html>
-
