@@ -1,10 +1,6 @@
-const initSqlJs = require('sql.js');
-const fs = require('fs');
-const path = require('path');
+const mysql = require('mysql2/promise');
 
-const dbPath = path.join(__dirname, 'votacion.db');
-
-let db = null;
+let pool = null;
 
 // Opciones de pizza (hardcoded ya que son fijas)
 const pizzaOptions = [
@@ -23,59 +19,55 @@ const pizzaOptions = [
 ];
 
 async function initDatabase() {
-  const SQL = await initSqlJs();
-  
-  // Cargar base de datos existente o crear nueva
-  if (fs.existsSync(dbPath)) {
-    const fileBuffer = fs.readFileSync(dbPath);
-    db = new SQL.Database(fileBuffer);
-  } else {
-    db = new SQL.Database();
-  }
-  
+  // Crear pool de conexiones usando la URL de MySQL
+  pool = mysql.createPool({
+    uri: process.env.MYSQL_URL || process.env.MYSQL_PUBLIC_URL,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+  });
+
+  // Verificar conexión
+  const connection = await pool.getConnection();
+  console.log('✅ Conectado a MySQL en Railway');
+  connection.release();
+
   // Crear tablas
-  db.run(`
+  await pool.execute(`
     CREATE TABLE IF NOT EXISTS voting_links (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      token TEXT UNIQUE NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      is_used INTEGER DEFAULT 0,
-      used_at DATETIME
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      token VARCHAR(255) UNIQUE NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      is_used TINYINT(1) DEFAULT 0,
+      used_at TIMESTAMP NULL
     )
   `);
   
-  db.run(`
+  await pool.execute(`
     CREATE TABLE IF NOT EXISTS votes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      link_token TEXT NOT NULL,
-      vote_1 TEXT NOT NULL,
-      vote_2 TEXT NOT NULL,
-      voted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      ip_address TEXT,
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      link_token VARCHAR(255) NOT NULL,
+      vote_1 VARCHAR(50) NOT NULL,
+      vote_2 VARCHAR(50) NOT NULL,
+      voted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      ip_address VARCHAR(45),
       FOREIGN KEY (link_token) REFERENCES voting_links(token)
     )
   `);
   
-  // Crear índice
-  db.run(`CREATE INDEX IF NOT EXISTS idx_token ON voting_links(token)`);
-  
-  // Guardar cambios
-  saveDatabase();
-  
-  console.log('✅ Base de datos inicializada');
-  return db;
-}
-
-function saveDatabase() {
-  if (db) {
-    const data = db.export();
-    const buffer = Buffer.from(data);
-    fs.writeFileSync(dbPath, buffer);
+  // Crear índice si no existe
+  try {
+    await pool.execute(`CREATE INDEX idx_token ON voting_links(token)`);
+  } catch (err) {
+    // El índice ya existe, ignorar error
   }
+  
+  console.log('✅ Base de datos MySQL inicializada');
+  return pool;
 }
 
 function getDb() {
-  return db;
+  return pool;
 }
 
-module.exports = { initDatabase, getDb, saveDatabase, pizzaOptions };
+module.exports = { initDatabase, getDb, pizzaOptions };

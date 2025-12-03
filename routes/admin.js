@@ -1,7 +1,7 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
-const { getDb, saveDatabase, pizzaOptions } = require('../database/init');
+const { getDb, pizzaOptions } = require('../database/init');
 const { basicAuth } = require('../middleware/auth');
 
 const router = express.Router();
@@ -20,7 +20,7 @@ function getBaseUrl(req) {
 }
 
 // Generar un nuevo link de votación
-router.post('/generate-link', (req, res) => {
+router.post('/generate-link', async (req, res) => {
   try {
     const db = getDb();
     
@@ -30,8 +30,7 @@ router.post('/generate-link', (req, res) => {
     const token = `${uuid}${randomBytes}`;
 
     // Insertar en la base de datos
-    db.run('INSERT INTO voting_links (token) VALUES (?)', [token]);
-    saveDatabase();
+    await db.execute('INSERT INTO voting_links (token) VALUES (?)', [token]);
 
     const baseUrl = getBaseUrl(req);
     const voteUrl = `${baseUrl}/votar/${token}`;
@@ -49,12 +48,12 @@ router.post('/generate-link', (req, res) => {
 });
 
 // Obtener todos los links generados
-router.get('/links', (req, res) => {
+router.get('/links', async (req, res) => {
   try {
     const db = getDb();
     const baseUrl = getBaseUrl(req);
     
-    const stmt = db.prepare(`
+    const [links] = await db.execute(`
       SELECT 
         token,
         created_at,
@@ -63,12 +62,6 @@ router.get('/links', (req, res) => {
       FROM voting_links 
       ORDER BY created_at DESC
     `);
-    
-    const links = [];
-    while (stmt.step()) {
-      links.push(stmt.getAsObject());
-    }
-    stmt.free();
 
     res.json({
       success: true,
@@ -85,12 +78,12 @@ router.get('/links', (req, res) => {
 });
 
 // Obtener resultados de votación
-router.get('/results', (req, res) => {
+router.get('/results', async (req, res) => {
   try {
     const db = getDb();
     
     // Contar votos totales por pizza
-    const votesStmt = db.prepare(`
+    const [rawVotes] = await db.execute(`
       SELECT 
         vote_1 as pizza,
         COUNT(*) as count
@@ -103,12 +96,6 @@ router.get('/results', (req, res) => {
       FROM votes
       GROUP BY vote_2
     `);
-    
-    const rawVotes = [];
-    while (votesStmt.step()) {
-      rawVotes.push(votesStmt.getAsObject());
-    }
-    votesStmt.free();
 
     // Agregar los votos
     const voteCounts = {};
@@ -118,20 +105,18 @@ router.get('/results', (req, res) => {
 
     rawVotes.forEach(row => {
       if (voteCounts.hasOwnProperty(row.pizza)) {
-        voteCounts[row.pizza] += row.count;
+        voteCounts[row.pizza] += Number(row.count);
       }
     });
 
     // Estadísticas generales
-    const statsStmt = db.prepare(`
+    const [statsResult] = await db.execute(`
       SELECT 
         (SELECT COUNT(*) FROM voting_links) as total_links,
         (SELECT COUNT(*) FROM voting_links WHERE is_used = 1) as used_links,
         (SELECT COUNT(*) FROM votes) as total_votes
     `);
-    statsStmt.step();
-    const stats = statsStmt.getAsObject();
-    statsStmt.free();
+    const stats = statsResult[0];
 
     res.json({
       success: true,
@@ -141,10 +126,10 @@ router.get('/results', (req, res) => {
         votes: voteCounts[pizza.id]
       })),
       stats: {
-        totalLinks: stats.total_links,
-        usedLinks: stats.used_links,
-        availableLinks: stats.total_links - stats.used_links,
-        totalVotes: stats.total_votes
+        totalLinks: Number(stats.total_links),
+        usedLinks: Number(stats.used_links),
+        availableLinks: Number(stats.total_links) - Number(stats.used_links),
+        totalVotes: Number(stats.total_votes)
       }
     });
   } catch (error) {

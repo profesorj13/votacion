@@ -1,5 +1,5 @@
 const express = require('express');
-const { getDb, saveDatabase, pizzaOptions } = require('../database/init');
+const { getDb, pizzaOptions } = require('../database/init');
 
 const router = express.Router();
 
@@ -12,19 +12,13 @@ router.get('/options', (req, res) => {
 });
 
 // Verificar si un token es válido
-router.get('/verify/:token', (req, res) => {
+router.get('/verify/:token', async (req, res) => {
   try {
     const { token } = req.params;
     const db = getDb();
 
-    const stmt = db.prepare('SELECT * FROM voting_links WHERE token = ?');
-    stmt.bind([token]);
-    
-    let link = null;
-    if (stmt.step()) {
-      link = stmt.getAsObject();
-    }
-    stmt.free();
+    const [rows] = await db.execute('SELECT * FROM voting_links WHERE token = ?', [token]);
+    const link = rows[0];
 
     if (!link) {
       return res.json({
@@ -51,7 +45,7 @@ router.get('/verify/:token', (req, res) => {
 });
 
 // Registrar votos
-router.post('/submit/:token', (req, res) => {
+router.post('/submit/:token', async (req, res) => {
   try {
     const { token } = req.params;
     const { vote1, vote2 } = req.body;
@@ -75,14 +69,8 @@ router.post('/submit/:token', (req, res) => {
     }
 
     // Verificar que el link existe y no ha sido usado
-    const checkStmt = db.prepare('SELECT * FROM voting_links WHERE token = ? AND is_used = 0');
-    checkStmt.bind([token]);
-    
-    let link = null;
-    if (checkStmt.step()) {
-      link = checkStmt.getAsObject();
-    }
-    checkStmt.free();
+    const [rows] = await db.execute('SELECT * FROM voting_links WHERE token = ? AND is_used = 0', [token]);
+    const link = rows[0];
 
     if (!link) {
       return res.status(400).json({
@@ -92,14 +80,11 @@ router.post('/submit/:token', (req, res) => {
     }
 
     // Marcar el link como usado
-    db.run('UPDATE voting_links SET is_used = 1, used_at = CURRENT_TIMESTAMP WHERE token = ?', [token]);
+    await db.execute('UPDATE voting_links SET is_used = 1, used_at = CURRENT_TIMESTAMP WHERE token = ?', [token]);
 
     // Registrar los votos
     const ip = req.ip || req.connection?.remoteAddress || 'unknown';
-    db.run('INSERT INTO votes (link_token, vote_1, vote_2, ip_address) VALUES (?, ?, ?, ?)', [token, vote1, vote2, ip]);
-    
-    // Guardar cambios
-    saveDatabase();
+    await db.execute('INSERT INTO votes (link_token, vote_1, vote_2, ip_address) VALUES (?, ?, ?, ?)', [token, vote1, vote2, ip]);
 
     res.json({
       success: true,
