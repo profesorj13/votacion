@@ -6,15 +6,15 @@ let pool = null;
 const pizzaOptions = [
   {
     id: 'pizza_1',
-    name: 'Margherita Clásica',
-    description: 'La reina de las pizzas: salsa de tomate San Marzano, mozzarella fresca de búfala, albahaca fresca y un toque de aceite de oliva extra virgen.',
-    image: '/images/margherita.png'
+    name: 'Beato Braseada',
+    description: 'Bondiola de cerdo desmechada, lactonesa de ajo y miel picante. Decorada con cebolla de verdeo.',
+    image: '/images/beatobraseada.png'
   },
   {
     id: 'pizza_2', 
-    name: 'Pepperoni Suprema',
-    description: 'Para los amantes del sabor intenso: generosas capas de pepperoni crujiente sobre mozzarella derretida, con un toque de orégano italiano.',
-    image: '/images/pepperoni.png'
+    name: 'Pizza Churri',
+    description: 'Al estilo cordobés. Chorizo de cerdo, pimiento rojo asado, cebollas encurtidas, queso provolone y el chimichurri de la casa.',
+    image: '/images/churri.png'
   }
 ];
 
