@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Votar 🍕</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="vote-page">
+  <!-- Estado: Cargando -->
+  <div id="loading-state" class="state-container">
+    <div class="loader"></div>
+    <p>Verificando link de votación...</p>
+  </div>
+
+  <!-- Estado: Link Inválido -->
+  <div id="invalid-state" class="state-container hidden">
+    <div class="state-icon">❌</div>
+    <h2>Link No Válido</h2>
+    <p id="invalid-reason">Este link ya fue utilizado o no existe.</p>
+  </div>
+
+  <!-- Estado: Votación -->
+  <div id="voting-state" class="hidden">
+    <header class="vote-header">
+      <h1>🍕 ¡Hora de Votar!</h1>
+      <p class="vote-instructions">Selecciona <strong>2 pizzas</strong> para registrar tu voto (pueden ser iguales)</p>
+    </header>
+
+    <main class="vote-main">
+      <div id="pizza-options" class="pizza-grid">
+        <!-- Las opciones se cargan dinámicamente -->
+      </div>
+
+      <div class="vote-summary">
+        <h3>Tu Selección:</h3>
+        <div id="selection-display" class="selection-display">
+          <span class="selection-slot" id="slot-1">Pizza 1: <em>Sin seleccionar</em></span>
+          <span class="selection-slot" id="slot-2">Pizza 2: <em>Sin seleccionar</em></span>
+        </div>
+      </div>
+
+      <button id="submit-vote" class="btn btn-primary btn-large" disabled>
+        Confirmar Voto
+      </button>
+      <p id="vote-error" class="error-msg hidden"></p>
+    </main>
+  </div>
+
+  <!-- Estado: Voto Registrado -->
+  <div id="success-state" class="state-container hidden">
+    <div class="state-icon success-icon">✅</div>
+    <h2>¡Gracias por Votar!</h2>
+    <p>Tus votos han sido registrados exitosamente.</p>
+    <div class="confetti" id="confetti"></div>
+  </div>
+
+  <script src="/js/vote.js"></script>
+</body>
+</html>
+

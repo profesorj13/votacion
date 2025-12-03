@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Supervisor 🍕</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="admin-page">
+  <!-- Login Modal -->
+  <div id="login-modal" class="modal">
+    <div class="modal-content login-box">
+      <h2>🔐 Acceso Supervisor</h2>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="username">Usuario</label>
+          <input type="text" id="username" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Ingresar</button>
+        <p id="login-error" class="error-msg hidden"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Panel Principal -->
+  <div id="admin-panel" class="hidden">
+    <header class="admin-header">
+      <h1>🍕 Panel de Supervisor</h1>
+      <button id="logout-btn" class="btn btn-secondary">Cerrar Sesión</button>
+    </header>
+
+    <main class="admin-main">
+      <!-- Sección Generar Link -->
+      <section class="card">
+        <h2>Generar Link de Votación</h2>
+        <p class="card-description">Cada link permite emitir 2 votos y solo puede usarse una vez.</p>
+        <button id="generate-btn" class="btn btn-primary">
+          <span class="btn-icon">✨</span>
+          Generar Nuevo Link
+        </button>
+        <div id="generated-link" class="generated-link hidden">
+          <label>Link generado:</label>
+          <div class="link-container">
+            <input type="text" id="link-input" readonly>
+            <button id="copy-btn" class="btn btn-secondary">Copiar</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección Resultados -->
+      <section class="card">
+        <h2>📊 Resultados en Vivo</h2>
+        <div id="results-container" class="results-container">
+          <div class="loading">Cargando resultados...</div>
+        </div>
+        <div id="stats-container" class="stats-container"></div>
+      </section>
+
+      <!-- Sección Links Generados -->
+      <section class="card">
+        <h2>📋 Links Generados</h2>
+        <div id="links-container" class="links-container">
+          <div class="loading">Cargando links...</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>
+
