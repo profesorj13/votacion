@@ -55,6 +55,20 @@ async function initDatabase() {
     )
   `);
   
+  // Tabla para participantes del sorteo
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS raffle_participants (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      link_token VARCHAR(255) NOT NULL,
+      person1_name VARCHAR(100) NOT NULL,
+      person1_dni VARCHAR(20) NOT NULL,
+      person2_name VARCHAR(100),
+      person2_dni VARCHAR(20),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (link_token) REFERENCES voting_links(token)
+    )
+  `);
+  
   // Crear índice si no existe
   try {
     await pool.execute(`CREATE INDEX idx_token ON voting_links(token)`);

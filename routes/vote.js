@@ -48,7 +48,7 @@ router.get('/verify/:token', async (req, res) => {
 router.post('/submit/:token', async (req, res) => {
   try {
     const { token } = req.params;
-    const { vote1, vote2 } = req.body;
+    const { vote1, vote2, raffle } = req.body;
     const db = getDb();
 
     // Validar que se enviaron los votos
@@ -85,6 +85,14 @@ router.post('/submit/:token', async (req, res) => {
     // Registrar los votos
     const ip = req.ip || req.connection?.remoteAddress || 'unknown';
     await db.execute('INSERT INTO votes (link_token, vote_1, vote_2, ip_address) VALUES (?, ?, ?, ?)', [token, vote1, vote2, ip]);
+
+    // Registrar participación en el sorteo si hay datos
+    if (raffle && raffle.person1_name && raffle.person1_dni) {
+      await db.execute(
+        'INSERT INTO raffle_participants (link_token, person1_name, person1_dni, person2_name, person2_dni) VALUES (?, ?, ?, ?, ?)',
+        [token, raffle.person1_name, raffle.person1_dni, raffle.person2_name, raffle.person2_dni]
+      );
+    }
 
     res.json({
       success: true,

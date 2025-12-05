@@ -12,6 +12,23 @@ const pizzaGrid = document.getElementById('pizza-options');
 const submitBtn = document.getElementById('submit-vote');
 const voteError = document.getElementById('vote-error');
 
+// Elementos del sorteo
+const participateRaffle = document.getElementById('participate-raffle');
+const raffleForm = document.getElementById('raffle-form');
+const person1Name = document.getElementById('person1-name');
+const person1Dni = document.getElementById('person1-dni');
+const person2Name = document.getElementById('person2-name');
+const person2Dni = document.getElementById('person2-dni');
+
+// Toggle del formulario de sorteo
+participateRaffle.addEventListener('change', () => {
+  if (participateRaffle.checked) {
+    raffleForm.classList.remove('hidden');
+  } else {
+    raffleForm.classList.add('hidden');
+  }
+});
+
 // Obtener token de la URL
 function getToken() {
   const path = window.location.pathname;
@@ -153,9 +170,55 @@ function updateUI() {
   voteError.classList.add('hidden');
 }
 
+// Validar datos del sorteo
+function validateRaffleData() {
+  if (!participateRaffle.checked) {
+    return { valid: true, data: null };
+  }
+  
+  const p1Name = person1Name.value.trim();
+  const p1Dni = person1Dni.value.trim();
+  const p2Name = person2Name.value.trim();
+  const p2Dni = person2Dni.value.trim();
+  
+  // Si participa, al menos el participante 1 es obligatorio
+  if (!p1Name || !p1Dni) {
+    return { 
+      valid: false, 
+      error: 'Para participar del sorteo, completá nombre y DNI del participante 1' 
+    };
+  }
+  
+  // Si completa datos del participante 2, deben estar ambos
+  if ((p2Name && !p2Dni) || (!p2Name && p2Dni)) {
+    return { 
+      valid: false, 
+      error: 'Si agregás participante 2, completá nombre y DNI' 
+    };
+  }
+  
+  return {
+    valid: true,
+    data: {
+      person1_name: p1Name,
+      person1_dni: p1Dni,
+      person2_name: p2Name || null,
+      person2_dni: p2Dni || null
+    }
+  };
+}
+
 // Enviar voto
 submitBtn.addEventListener('click', async () => {
   if (selectedPizzas.length !== 2) return;
+  
+  // Validar datos del sorteo
+  const raffleValidation = validateRaffleData();
+  if (!raffleValidation.valid) {
+    voteError.textContent = raffleValidation.error;
+    voteError.classList.remove('hidden');
+    return;
+  }
   
   submitBtn.disabled = true;
   submitBtn.textContent = 'Enviando...';
@@ -170,7 +233,8 @@ submitBtn.addEventListener('click', async () => {
       },
       body: JSON.stringify({
         vote1: selectedPizzas[0],
-        vote2: selectedPizzas[1]
+        vote2: selectedPizzas[1],
+        raffle: raffleValidation.data
       })
     });
     

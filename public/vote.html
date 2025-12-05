@@ -45,6 +45,63 @@
         </div>
       </div>
 
+      <!-- Sección Sorteo $150.000 -->
+      <div class="raffle-section">
+        <div class="raffle-header">
+          <div class="raffle-badge">🎁 SORTEO</div>
+          <h2 class="raffle-title">¡GANÁ $150.000!</h2>
+          <p class="raffle-subtitle">En consumo para vos y tu acompañante</p>
+        </div>
+        
+        <div class="raffle-description">
+          <p>Completá los datos y participás automáticamente del sorteo. <strong>¡Es opcional!</strong></p>
+        </div>
+
+        <div class="raffle-toggle">
+          <label class="toggle-container">
+            <input type="checkbox" id="participate-raffle">
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">¡Quiero participar del sorteo!</span>
+          </label>
+        </div>
+
+        <div id="raffle-form" class="raffle-form hidden">
+          <div class="participant-card">
+            <div class="participant-header">
+              <span class="participant-number">1</span>
+              <span class="participant-label">Participante 1</span>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="person1-name">Nombre completo</label>
+                <input type="text" id="person1-name" placeholder="Ej: Juan Pérez" maxlength="100">
+              </div>
+              <div class="form-group">
+                <label for="person1-dni">DNI</label>
+                <input type="text" id="person1-dni" placeholder="Ej: 12345678" maxlength="20">
+              </div>
+            </div>
+          </div>
+
+          <div class="participant-card">
+            <div class="participant-header">
+              <span class="participant-number">2</span>
+              <span class="participant-label">Participante 2 <em>(opcional)</em></span>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="person2-name">Nombre completo</label>
+                <input type="text" id="person2-name" placeholder="Ej: María García" maxlength="100">
+              </div>
+              <div class="form-group">
+                <label for="person2-dni">DNI</label>
+                <input type="text" id="person2-dni" placeholder="Ej: 87654321" maxlength="20">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <button id="submit-vote" class="btn btn-primary btn-large" disabled>
         Confirmar Voto
       </button>

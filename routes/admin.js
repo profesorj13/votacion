@@ -138,4 +138,45 @@ router.get('/results', async (req, res) => {
   }
 });
 
+// Obtener participantes del sorteo
+router.get('/raffle-participants', async (req, res) => {
+  try {
+    const db = getDb();
+    
+    const [participants] = await db.execute(`
+      SELECT 
+        id,
+        link_token,
+        person1_name,
+        person1_dni,
+        person2_name,
+        person2_dni,
+        created_at
+      FROM raffle_participants 
+      ORDER BY created_at DESC
+    `);
+
+    // Contar total de participantes (personas individuales)
+    let totalPeople = 0;
+    participants.forEach(p => {
+      totalPeople += 1; // Persona 1 siempre existe
+      if (p.person2_name && p.person2_dni) {
+        totalPeople += 1; // Persona 2 es opcional
+      }
+    });
+
+    res.json({
+      success: true,
+      participants,
+      stats: {
+        totalEntries: participants.length,
+        totalPeople: totalPeople
+      }
+    });
+  } catch (error) {
+    console.error('Error obteniendo participantes del sorteo:', error);
+    res.status(500).json({ error: 'Error al obtener los participantes' });
+  }
+});
+
 module.exports = router;

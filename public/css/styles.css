@@ -1055,6 +1055,345 @@ h1, h2, h3 {
   margin: var(--spacing-md) auto 0;
 }
 
+/* ==========================================
+   SECCIÓN SORTEO $150.000
+   ========================================== */
+
+.raffle-section {
+  background: linear-gradient(135deg, var(--color-card) 0%, rgba(255, 211, 0, 0.05) 100%);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin: var(--spacing-xl) 0 var(--spacing-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.raffle-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-primary));
+}
+
+.raffle-section::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 211, 0, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.raffle-header {
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+  position: relative;
+  z-index: 1;
+}
+
+.raffle-badge {
+  display: inline-block;
+  background: var(--color-primary);
+  color: var(--color-text-dark);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  letter-spacing: 0.15em;
+  margin-bottom: var(--spacing-sm);
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 211, 0, 0.5); }
+  50% { transform: scale(1.05); box-shadow: 0 0 20px 5px rgba(255, 211, 0, 0.3); }
+}
+
+.raffle-title {
+  font-size: clamp(2rem, 8vw, 3.5rem);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xs);
+  text-shadow: 
+    2px 2px 0 var(--color-accent),
+    4px 4px 0 rgba(0,0,0,0.3);
+  letter-spacing: 0.05em;
+}
+
+.raffle-subtitle {
+  font-size: 1.1rem;
+  color: var(--color-text-light);
+  font-weight: 400;
+}
+
+.raffle-description {
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+  position: relative;
+  z-index: 1;
+}
+
+.raffle-description p {
+  color: var(--color-text-light);
+  font-size: 1rem;
+}
+
+.raffle-description strong {
+  color: var(--color-primary);
+}
+
+/* Toggle de participación */
+.raffle-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-md);
+  position: relative;
+  z-index: 1;
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-bg-light);
+  transition: all 0.3s ease;
+}
+
+.toggle-container:hover {
+  border-color: var(--color-primary);
+  background: rgba(255, 211, 0, 0.05);
+}
+
+.toggle-container input {
+  display: none;
+}
+
+.toggle-slider {
+  width: 50px;
+  height: 26px;
+  background: var(--color-bg-light);
+  border-radius: 13px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: var(--color-text-light);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.toggle-container input:checked + .toggle-slider {
+  background: var(--color-primary);
+}
+
+.toggle-container input:checked + .toggle-slider::before {
+  transform: translateX(24px);
+  background: var(--color-text-dark);
+}
+
+.toggle-label {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  color: var(--color-text);
+}
+
+/* Formulario del sorteo */
+.raffle-form {
+  position: relative;
+  z-index: 1;
+  animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.participant-card {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  border: 1px solid rgba(255, 211, 0, 0.2);
+}
+
+.participant-card:last-child {
+  margin-bottom: 0;
+}
+
+.participant-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid rgba(255, 211, 0, 0.15);
+}
+
+.participant-number {
+  width: 28px;
+  height: 28px;
+  background: var(--color-primary);
+  color: var(--color-text-dark);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.participant-label {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  color: var(--color-text);
+}
+
+.participant-label em {
+  font-style: normal;
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.raffle-form .form-group {
+  margin-bottom: 0;
+}
+
+.raffle-form .form-group label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.raffle-form .form-group input {
+  width: 100%;
+  padding: var(--spacing-sm);
+  font-size: 1rem;
+  font-family: var(--font-body);
+  border: 2px solid var(--color-bg-light);
+  border-radius: var(--radius-sm);
+  background: var(--color-card);
+  color: var(--color-text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.raffle-form .form-group input::placeholder {
+  color: var(--color-text-light);
+  opacity: 0.5;
+}
+
+.raffle-form .form-group input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(255, 211, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+  
+  .raffle-title {
+    font-size: 2rem;
+  }
+  
+  .toggle-label {
+    font-size: 0.95rem;
+  }
+}
+
+/* ==========================================
+   ADMIN - SECCIÓN SORTEO
+   ========================================== */
+
+.raffle-card {
+  border: 2px solid var(--color-primary);
+}
+
+.raffle-card::before {
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-primary));
+  height: 4px;
+}
+
+.raffle-mini-stats {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.raffle-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 211, 0, 0.2);
+}
+
+.raffle-stat-value {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--color-primary);
+}
+
+.raffle-stat-label {
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.raffle-table td strong {
+  color: var(--color-primary);
+}
+
+.raffle-table .text-muted,
+.text-muted {
+  color: var(--color-text-light);
+  opacity: 0.5;
+}
+
+.raffle-participants-container {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
 /* Confetti */
 .confetti {
   position: fixed;

@@ -27,10 +27,12 @@ function showAdminPanel() {
   adminPanel.classList.remove('hidden');
   loadResults();
   loadLinks();
+  loadRaffleParticipants();
   // Auto-refresh cada 10 segundos
   setInterval(() => {
     loadResults();
     loadLinks();
+    loadRaffleParticipants();
   }, 10000);
 }
 
@@ -229,6 +231,73 @@ function renderLinks(links) {
   `;
 }
 
+// Cargar participantes del sorteo
+async function loadRaffleParticipants() {
+  try {
+    const response = await fetch('/api/admin/raffle-participants', {
+      headers: {
+        'Authorization': `Basic ${authCredentials}`
+      }
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      renderRaffleParticipants(data.participants, data.stats);
+    }
+  } catch (error) {
+    console.error('Error cargando participantes del sorteo:', error);
+  }
+}
+
+// Renderizar participantes del sorteo
+function renderRaffleParticipants(participants, stats) {
+  const container = document.getElementById('raffle-container');
+  const statsContainer = document.getElementById('raffle-stats');
+  
+  // Mostrar estadísticas
+  statsContainer.innerHTML = `
+    <div class="raffle-stat">
+      <span class="raffle-stat-value">${stats.totalEntries}</span>
+      <span class="raffle-stat-label">Registros</span>
+    </div>
+    <div class="raffle-stat">
+      <span class="raffle-stat-value">${stats.totalPeople}</span>
+      <span class="raffle-stat-label">Personas</span>
+    </div>
+  `;
+  
+  if (participants.length === 0) {
+    container.innerHTML = '<p class="empty-state">Aún no hay participantes registrados</p>';
+    return;
+  }
+  
+  container.innerHTML = `
+    <table class="links-table raffle-table">
+      <thead>
+        <tr>
+          <th>Participante 1</th>
+          <th>DNI</th>
+          <th>Participante 2</th>
+          <th>DNI</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${participants.map(p => `
+          <tr>
+            <td><strong>${p.person1_name}</strong></td>
+            <td>${p.person1_dni}</td>
+            <td>${p.person2_name || '<em class="text-muted">-</em>'}</td>
+            <td>${p.person2_dni || '<em class="text-muted">-</em>'}</td>
+            <td>${formatDate(p.created_at)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
 // Utilidades
 function formatDate(dateStr) {
   const date = new Date(dateStr);
@@ -251,4 +320,5 @@ function copyToClipboard(text) {
 
 // Inicializar
 checkAuth();
+
 
