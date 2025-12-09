@@ -11,6 +11,59 @@ router.get('/options', (req, res) => {
   });
 });
 
+// Obtener porcentajes de votos (público, sin nombres de pizzas)
+router.get('/percentages', async (req, res) => {
+  try {
+    const db = getDb();
+    
+    // Contar votos totales por pizza
+    const [rawVotes] = await db.execute(`
+      SELECT 
+        vote_1 as pizza,
+        COUNT(*) as count
+      FROM votes
+      GROUP BY vote_1
+      UNION ALL
+      SELECT 
+        vote_2 as pizza,
+        COUNT(*) as count
+      FROM votes
+      GROUP BY vote_2
+    `);
+
+    // Agregar los votos
+    const voteCounts = {};
+    pizzaOptions.forEach(pizza => {
+      voteCounts[pizza.id] = 0;
+    });
+
+    rawVotes.forEach(row => {
+      if (voteCounts.hasOwnProperty(row.pizza)) {
+        voteCounts[row.pizza] += Number(row.count);
+      }
+    });
+
+    // Calcular total
+    const totalVotes = Object.values(voteCounts).reduce((a, b) => a + b, 0);
+
+    // Devolver solo porcentajes sin nombres
+    const percentages = pizzaOptions.map((pizza, index) => ({
+      index: index,
+      percentage: totalVotes > 0 ? Math.round((voteCounts[pizza.id] / totalVotes) * 100) : 0,
+      votes: voteCounts[pizza.id]
+    }));
+
+    res.json({
+      success: true,
+      percentages,
+      totalVotes
+    });
+  } catch (error) {
+    console.error('Error obteniendo porcentajes:', error);
+    res.status(500).json({ error: 'Error al obtener los porcentajes' });
+  }
+});
+
 // Verificar si un token es válido
 router.get('/verify/:token', async (req, res) => {
   try {

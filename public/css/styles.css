@@ -358,6 +358,284 @@ h1, h2, h3 {
   justify-content: center;
 }
 
+/* ==========================================
+   PIE CHART - Gráfico de torta
+   ========================================== */
+
+.pie-chart-container {
+  margin: var(--spacing-xl) auto;
+  padding: var(--spacing-lg);
+  background: rgba(29, 29, 27, 0.8);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 211, 0, 0.2);
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.4),
+    0 0 60px rgba(255, 211, 0, 0.1) inset;
+  backdrop-filter: blur(10px);
+  max-width: 400px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pie-chart-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-primary));
+}
+
+.pie-chart-container::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(255, 211, 0, 0.03) 60deg,
+    transparent 120deg
+  );
+  animation: rotate-glow 8s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rotate-glow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.pie-chart-wrapper {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto var(--spacing-md);
+}
+
+.pie-chart {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 4px 20px rgba(255, 211, 0, 0.3));
+}
+
+.pie-bg {
+  animation: pulse-pie 3s ease-in-out infinite;
+}
+
+@keyframes pulse-pie {
+  0%, 100% { opacity: 0.05; }
+  50% { opacity: 0.1; }
+}
+
+.pie-segment {
+  cursor: pointer;
+}
+
+.pie-segment:hover {
+  filter: brightness(1.2) url(#glow);
+}
+
+/* Anillo giratorio decorativo */
+.pie-ring {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--color-primary);
+  border-right-color: rgba(255, 211, 0, 0.3);
+  animation: ring-spin 4s linear infinite;
+  pointer-events: none;
+}
+
+.pie-ring::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  border-bottom-color: var(--color-accent);
+  border-left-color: rgba(243, 146, 0, 0.2);
+  animation: ring-spin 6s linear infinite reverse;
+}
+
+@keyframes ring-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.pie-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  background: var(--color-bg);
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 0 20px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(255, 211, 0, 0.1) inset;
+  border: 2px solid rgba(255, 211, 0, 0.3);
+}
+
+.total-votes-number {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  color: var(--color-primary);
+  line-height: 1;
+  text-shadow: 0 0 20px rgba(255, 211, 0, 0.5);
+}
+
+.total-votes-label {
+  font-size: 0.7rem;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-top: 2px;
+}
+
+.pie-legend {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  position: relative;
+  z-index: 1;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-sm);
+  transition: all 0.3s ease;
+}
+
+.legend-item:hover {
+  background: rgba(255, 211, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.legend-color-1 {
+  background: linear-gradient(135deg, #ffd300, #f39200);
+}
+
+.legend-color-2 {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.legend-text {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-text);
+  letter-spacing: 0.05em;
+}
+
+.legend-percent {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--color-primary);
+  min-width: 45px;
+  text-align: right;
+  text-shadow: 0 0 10px rgba(255, 211, 0, 0.3);
+}
+
+/* Animación de entrada para el container */
+.pie-chart-container {
+  animation: chart-entrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes chart-entrance {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Link discreto para admin */
+.admin-link-discrete {
+  display: inline-block;
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  text-decoration: none;
+  opacity: 0.4;
+  transition: all 0.3s ease;
+  letter-spacing: 0.05em;
+}
+
+.admin-link-discrete:hover {
+  opacity: 1;
+  color: var(--color-primary);
+}
+
+/* Responsive para el gráfico */
+@media (max-width: 768px) {
+  .pie-chart-container {
+    max-width: 320px;
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) auto;
+  }
+  
+  .pie-chart-wrapper {
+    width: 160px;
+    height: 160px;
+  }
+  
+  .pie-center {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .total-votes-number {
+    font-size: 2rem;
+  }
+  
+  .pie-legend {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    align-items: center;
+  }
+  
+  .legend-item {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .admin-link-discrete {
+    font-size: 0.65rem;
+  }
+}
+
 .hero-decoration {
   position: absolute;
   inset: 0;

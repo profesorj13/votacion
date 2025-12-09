@@ -16,9 +16,57 @@
       <img src="/images/PDP_vector.svg" alt="La Pizza del Pueblo" class="hero-logo">
       <h1 class="hero-title">VOTACIÓN EN VIVO</h1>
       <p class="hero-subtitle">Sistema de votación oficial del reality</p>
-      <div class="hero-actions">
-        <a href="/admin" class="btn btn-primary">Panel de Supervisor</a>
+      
+      <!-- Gráfico de torta -->
+      <div class="pie-chart-container">
+        <div class="pie-chart-wrapper">
+          <svg class="pie-chart" viewBox="0 0 100 100">
+            <defs>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+              <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ffd300"/>
+                <stop offset="100%" style="stop-color:#f39200"/>
+              </linearGradient>
+              <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ef4444"/>
+                <stop offset="100%" style="stop-color:#dc2626"/>
+              </linearGradient>
+            </defs>
+            <!-- Los segmentos se generarán dinámicamente -->
+            <circle class="pie-bg" cx="50" cy="50" r="40" fill="rgba(255,255,255,0.05)"/>
+          </svg>
+          <div class="pie-center">
+            <span class="total-votes-number">0</span>
+            <span class="total-votes-label">VOTOS</span>
+          </div>
+          <!-- Anillo giratorio decorativo -->
+          <div class="pie-ring"></div>
+        </div>
+        <div class="pie-legend">
+          <div class="legend-item">
+            <span class="legend-color legend-color-1"></span>
+            <span class="legend-text">Pizza A</span>
+            <span class="legend-percent" id="percent-0">0%</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color legend-color-2"></span>
+            <span class="legend-text">Pizza B</span>
+            <span class="legend-percent" id="percent-1">0%</span>
+          </div>
+        </div>
       </div>
+
+      <div class="hero-actions">
+        <a href="https://menu.fu.do/beato" target="_blank" class="btn btn-primary btn-large">🍕 Probala y Votá</a>
+      </div>
+      
+      <a href="/admin" class="admin-link-discrete">Panel de Supervisor</a>
     </div>
     <div class="hero-decoration">
       <div class="floating-pizza p1">🍕</div>
@@ -30,5 +78,165 @@
   <footer class="landing-footer">
     <p>Sistema de votación seguro • Cada link = 2 votos únicos</p>
   </footer>
+
+  <script>
+    // Configuración del gráfico
+    const COLORS = ['url(#gradient1)', 'url(#gradient2)'];
+    const STROKE_COLORS = ['#ffd300', '#ef4444'];
+    let isFirstLoad = true;
+    
+    // Función para crear un segmento de torta
+    function createPieSegment(percentage, startAngle, color, strokeColor, index) {
+      const radius = 40;
+      const cx = 50;
+      const cy = 50;
+      
+      if (percentage === 0) return null;
+      
+      const angle = (percentage / 100) * 360;
+      const endAngle = startAngle + angle;
+      
+      // Convertir ángulos a radianes
+      const startRad = (startAngle - 90) * Math.PI / 180;
+      const endRad = (endAngle - 90) * Math.PI / 180;
+      
+      // Calcular puntos
+      const x1 = cx + radius * Math.cos(startRad);
+      const y1 = cy + radius * Math.sin(startRad);
+      const x2 = cx + radius * Math.cos(endRad);
+      const y2 = cy + radius * Math.sin(endRad);
+      
+      // Determinar si el arco es mayor a 180 grados
+      const largeArcFlag = angle > 180 ? 1 : 0;
+      
+      // Crear el path
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      const d = percentage >= 100 
+        ? `M ${cx} ${cy - radius} A ${radius} ${radius} 0 1 1 ${cx - 0.001} ${cy - radius} Z`
+        : `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+      
+      path.setAttribute('d', d);
+      path.setAttribute('fill', color);
+      path.setAttribute('stroke', strokeColor);
+      path.setAttribute('stroke-width', '0.5');
+      path.setAttribute('filter', 'url(#glow)');
+      path.setAttribute('class', `pie-segment pie-segment-${index}`);
+      path.style.transformOrigin = '50px 50px';
+      
+      return path;
+    }
+    
+    // Función para actualizar el gráfico
+    function updateChart(data) {
+      const svg = document.querySelector('.pie-chart');
+      const totalVotesEl = document.querySelector('.total-votes-number');
+      
+      // Remover segmentos anteriores
+      svg.querySelectorAll('.pie-segment').forEach(el => el.remove());
+      
+      if (data.totalVotes === 0) {
+        totalVotesEl.textContent = '0';
+        document.getElementById('percent-0').textContent = '0%';
+        document.getElementById('percent-1').textContent = '0%';
+        return;
+      }
+      
+      // Animar el número total de votos
+      animateNumber(totalVotesEl, data.totalVotes);
+      
+      // Crear segmentos
+      let startAngle = 0;
+      data.percentages.forEach((item, index) => {
+        const segment = createPieSegment(
+          item.percentage, 
+          startAngle, 
+          COLORS[index], 
+          STROKE_COLORS[index],
+          index
+        );
+        
+        if (segment) {
+          svg.appendChild(segment);
+        }
+        
+        // Actualizar leyenda
+        const percentEl = document.getElementById(`percent-${index}`);
+        if (percentEl) {
+          animatePercent(percentEl, item.percentage);
+        }
+        
+        startAngle += (item.percentage / 100) * 360;
+      });
+      
+      isFirstLoad = false;
+    }
+    
+    // Animar números
+    function animateNumber(element, target) {
+      const start = parseInt(element.textContent) || 0;
+      if (start === target) return;
+      
+      const duration = 800;
+      const startTime = performance.now();
+      
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(start + (target - start) * eased);
+        element.textContent = current;
+        
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        }
+      }
+      
+      requestAnimationFrame(update);
+    }
+    
+    // Animar porcentajes
+    function animatePercent(element, target) {
+      const start = parseInt(element.textContent) || 0;
+      if (start === target) return;
+      
+      const duration = 800;
+      const startTime = performance.now();
+      
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(start + (target - start) * eased);
+        element.textContent = current + '%';
+        
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        }
+      }
+      
+      requestAnimationFrame(update);
+    }
+    
+    // Obtener datos del servidor
+    async function fetchData() {
+      try {
+        const response = await fetch('/api/vote/percentages');
+        const data = await response.json();
+        
+        if (data.success) {
+          updateChart(data);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+    
+    // Inicializar
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchData();
+      // Actualizar cada 5 segundos
+      setInterval(fetchData, 5000);
+    });
+  </script>
 </body>
 </html>
