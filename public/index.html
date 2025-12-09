@@ -42,8 +42,8 @@
             <circle class="pie-bg" cx="50" cy="50" r="40" fill="rgba(255,255,255,0.05)"/>
           </svg>
           <div class="pie-center">
-            <span class="total-votes-number">0</span>
-            <span class="total-votes-label">VOTOS</span>
+            <span class="pie-center-icon">🍕</span>
+            <span class="pie-center-text">VS</span>
           </div>
           <!-- Anillo giratorio decorativo -->
           <div class="pie-ring"></div>
@@ -129,20 +129,15 @@
     // Función para actualizar el gráfico
     function updateChart(data) {
       const svg = document.querySelector('.pie-chart');
-      const totalVotesEl = document.querySelector('.total-votes-number');
       
       // Remover segmentos anteriores
       svg.querySelectorAll('.pie-segment').forEach(el => el.remove());
       
       if (data.totalVotes === 0) {
-        totalVotesEl.textContent = '0';
         document.getElementById('percent-0').textContent = '0%';
         document.getElementById('percent-1').textContent = '0%';
         return;
       }
-      
-      // Animar el número total de votos
-      animateNumber(totalVotesEl, data.totalVotes);
       
       // Crear segmentos
       let startAngle = 0;
@@ -169,29 +164,6 @@
       });
       
       isFirstLoad = false;
-    }
-    
-    // Animar números
-    function animateNumber(element, target) {
-      const start = parseInt(element.textContent) || 0;
-      if (start === target) return;
-      
-      const duration = 800;
-      const startTime = performance.now();
-      
-      function update(currentTime) {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        const current = Math.round(start + (target - start) * eased);
-        element.textContent = current;
-        
-        if (progress < 1) {
-          requestAnimationFrame(update);
-        }
-      }
-      
-      requestAnimationFrame(update);
     }
     
     // Animar porcentajes
